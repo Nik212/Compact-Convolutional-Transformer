@@ -2,7 +2,7 @@
 
 This is a simple implementation of Compact Convolution Transformer (original paper [Escaping the Big Data Paradigm with Compact Transformers](https://arxiv.org/pdf/2104.05704.pdf)) for cifar10 images classification task. 
 
-This task was done as a part of home assignments for course "Deep Vision and Graphics" at Skolkovo Institute of Science and Technology. Original .ipynb notebook template belongs the course authors.
+This task was done as a part of home assignments for course "Deep Vision and Graphics" at Skolkovo Institute of Science and Technology. Original .ipynb notebook template belongs to the course authors.
 
 
 ### **Usage**
