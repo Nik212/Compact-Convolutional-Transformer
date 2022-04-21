@@ -13,21 +13,19 @@ class CustomMultiHeadSelfAttention(nn.Module):
         self.head_dim = embed_dim // num_heads
         assert embed_dim % num_heads == 0, "embed_dim must be divisible by num_heads"
 
-        self.in_proj = nn.Linear(embed_dim, 3 * embed_dim)  # don't change the name
-        self.out_proj = nn.Linear(embed_dim, embed_dim)  # don't change the name
+        self.in_proj = nn.Linear(embed_dim, 3 * embed_dim) 
+        self.out_proj = nn.Linear(embed_dim, embed_dim)
 
         self.norm_coeff = self.head_dim ** 0.5
 
         self.attention_dropout = nn.Dropout(dropout)
         self.device = device
         self.head_dim = embed_dim // num_heads
-        assert self.head_dim * num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
 
     def forward(self, qkv):
         """
         qkv - query, key and value - it should be the same tensor since we implement self-attention
         """
-        # YOUR CODE
         # 1. apply self.in_proj to qkv
         # 2. split the result of step 1 on three equal parts of size self.embed_dim: query, key, value
         # 3. compute scaled dot-product attention for different heads in loop.
@@ -36,9 +34,8 @@ class CustomMultiHeadSelfAttention(nn.Module):
         # 4. apply dropout for each head result
         # 5. concat all results
         # 6. apply self.out_proj to the result of step 5
-        attention = F.multi_head_attention_forward
-        qkv = self.in_proj(qkv) #qkv 2 x num_heads x embed_dim
-        query, key, value = torch.chunk(qkv, 3, dim = 2) # 2 x num_heads x 3*embed_dim
+        qkv = self.in_proj(qkv)
+        query, key, value = torch.chunk(qkv, 3, dim = 2)
         heads = torch.tensor([]).to(self.device)
         for i in range(self.num_heads):
             q_i = query[:, :, i*self.head_dim : (i+1)*self.head_dim]
@@ -90,8 +87,6 @@ class TokenizerCCT(nn.Module):
                  ):
         super().__init__()
         self.tokenizer_layers = nn.Sequential(
-                # YOUR CODE
-                # it should implement the following sequence of layers:
                 # Conv2d(n_input_channels, n_output_channels, kernel_size, stride, padding, bias=False) +
                 #   + ReLU +
                 #   + MaxPool(pooling_kernel_size, pooling_stride, pooling_padding)
@@ -114,7 +109,6 @@ class SeqPooling(nn.Module):
         self.attention_pool = nn.Linear(embedding_dim, 1)
 
     def forward(self, x):
-        # YOUR CODE
         # 1. apply self.attention_pool to x
         w = self.attention_pool(x)
         # 2. take softmax over the first dim (token dim)
@@ -132,7 +126,6 @@ class SeqPooling(nn.Module):
 
 def create_mlp(embedding_dim, mlp_size, dropout_rate):
     return nn.Sequential(
-        # YOUR CODE: Linear + GELU + Dropout + Linear + Dropout
         nn.Linear(embedding_dim, mlp_size),
         nn.GELU(),
         nn.Dropout(dropout_rate),
@@ -151,12 +144,12 @@ class DropPath(nn.Module):
         if self.drop_prob == 0. or not self.training:
             return x
         keep_prob = 1 - self.drop_prob
-        shape = (x.shape[0],) + (1,) * (x.ndim - 1)  # work with diff dim tensors, not just 2D ConvNets
-        # YOUR CODE: generate random tensor, binarize it, cast to x.dtype, multiply x by the mask, 
+        shape = (x.shape[0],) + (1,) * (x.ndim - 1)
+        #generate random tensor, binarize it, cast to x.dtype, multiply x by the mask, 
         z = torch.rand(shape, dtype=x.dtype).to(self.device)
         random_tensor = z > self.drop_prob
         random_tensor = random_tensor > self.drop_prob
-        output = random_tensor.type(x.dtype) * x / keep_prob # keep_prob? Refer to to the test 1 after the first week
+        output = random_tensor.type(x.dtype) * x / keep_prob
         return output
 
 
@@ -235,7 +228,6 @@ class CompactConvTransformer3x1(nn.Module):
         self.fc = nn.Linear(embedding_dim, num_classes)
 
     def forward(self, x):
-        # YOUR CODE
         # 1. apply tokenizer to x
         patch_embeddings = self.tokenizer(x)
 
